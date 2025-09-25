@@ -9,7 +9,7 @@ import DashboardPage from './routes/DashboardPage.jsx';
 import ProfileOnboarding from './routes/ProfileOnboarding.jsx';
 import ProfilePage from './routes/ProfilePage.jsx';
 import LandingPage from './routes/LandingPage.jsx';
-import WizardPage from './routes/WizardPage.jsx';
+import Wizard from './routes/Wizard.jsx';
 
 const App = () => (
   <div className="min-h-screen bg-slate-50">
@@ -23,7 +23,7 @@ const App = () => (
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/onboarding" element={<ProfileOnboarding />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/wizard" element={<WizardPage />} />
+        <Route path="/wizard" element={<Wizard />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>

@@ -3,27 +3,45 @@
 // Provides global state for profile, applications, compare selections, and exposes helpers to mutate local mock data.
 import { createContext, useContext, useMemo, useState } from 'react';
 import { applications as initialApplications, universities as universitySeed, userProfile as profileSeed } from '../mockData';
+import {
+  clearWizardDraft,
+  loadApplications as loadApplicationsFromStorage,
+  loadProfile as loadProfileFromStorage,
+  saveApplications as persistApplications,
+  saveProfile as persistProfile,
+} from '../lib/storage.js';
 
 const AppContext = createContext();
 
 export const useAppContext = () => useContext(AppContext);
 
 export const AppProvider = ({ children }) => {
-  const [profile, setProfile] = useState(profileSeed);
-  const [applications, setApplications] = useState(initialApplications);
+  const [profile, setProfile] = useState(() => loadProfileFromStorage() ?? profileSeed);
+  const [applications, setApplications] = useState(
+    () => loadApplicationsFromStorage() ?? initialApplications,
+  );
   const [compareIds, setCompareIds] = useState([]);
 
   const saveProfile = (nextProfile) => {
-    setProfile((prev) => ({ ...prev, ...nextProfile }));
+    setProfile((prev) => {
+      const merged = { ...prev, ...nextProfile };
+      persistProfile(merged);
+      return merged;
+    });
   };
 
   const completeOnboarding = (nextProfile) => {
-    setProfile((prev) => ({ ...prev, ...nextProfile, completedOnboarding: true }));
+    setProfile((prev) => {
+      const merged = { ...prev, ...nextProfile, completedOnboarding: true };
+      persistProfile(merged);
+      clearWizardDraft();
+      return merged;
+    });
   };
 
   const toggleTask = (applicationId, taskId) => {
-    setApplications((prev) =>
-      prev.map((app) => {
+    setApplications((prev) => {
+      const next = prev.map((app) => {
         if (app.id !== applicationId) return app;
         return {
           ...app,
@@ -31,13 +49,15 @@ export const AppProvider = ({ children }) => {
             task.id === taskId ? { ...task, done: !task.done } : task,
           ),
         };
-      }),
-    );
+      });
+      persistApplications(next);
+      return next;
+    });
   };
 
   const addTask = (applicationId, task) => {
-    setApplications((prev) =>
-      prev.map((app) => {
+    setApplications((prev) => {
+      const next = prev.map((app) => {
         if (app.id !== applicationId) return app;
         const id = `task-${Date.now()}-${Math.round(Math.random() * 1000)}`;
         return {
@@ -52,13 +72,15 @@ export const AppProvider = ({ children }) => {
             },
           ],
         };
-      }),
-    );
+      });
+      persistApplications(next);
+      return next;
+    });
   };
 
   const updateTask = (applicationId, taskId, updates) => {
-    setApplications((prev) =>
-      prev.map((app) => {
+    setApplications((prev) => {
+      const next = prev.map((app) => {
         if (app.id !== applicationId) return app;
         return {
           ...app,
@@ -75,20 +97,24 @@ export const AppProvider = ({ children }) => {
               : task,
           ),
         };
-      }),
-    );
+      });
+      persistApplications(next);
+      return next;
+    });
   };
 
   const removeTask = (applicationId, taskId) => {
-    setApplications((prev) =>
-      prev.map((app) => {
+    setApplications((prev) => {
+      const next = prev.map((app) => {
         if (app.id !== applicationId) return app;
         return {
           ...app,
           tasks: app.tasks.filter((task) => task.id !== taskId),
         };
-      }),
-    );
+      });
+      persistApplications(next);
+      return next;
+    });
   };
 
   const addApplicationDraft = (universityId) => {
@@ -109,7 +135,9 @@ export const AppProvider = ({ children }) => {
         ],
         nextDeadlineDate: deadline,
       };
-      return [...prev, scaffold];
+      const next = [...prev, scaffold];
+      persistApplications(next);
+      return next;
     });
   };
 

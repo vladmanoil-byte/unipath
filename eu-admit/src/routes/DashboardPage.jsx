@@ -1,6 +1,7 @@
 // DashboardPage.jsx
 // Application tracking hub with KPI summary, cards, checklist drawer, and shared calendar.
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Container from '../components/layout/Container.jsx';
 import ApplicationCard from '../components/dashboard/ApplicationCard.jsx';
 import Checklist from '../components/dashboard/Checklist.jsx';
@@ -18,8 +19,18 @@ const statusLabels = {
 
 const DashboardPage = () => {
   const { applications, universities, toggleTask, addTask, updateTask, removeTask } = useAppContext();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [selectedAppId, setSelectedAppId] = useState(null);
   const [notes, setNotes] = useState({});
+  const [toast, setToast] = useState(() => location.state?.toast ?? '');
+
+  useEffect(() => {
+    if (location.state?.toast) {
+      setToast(location.state.toast);
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
 
   const kpis = useMemo(() => {
     const grouped = { in_progress: 0, submitted: 0, accepted: 0, rejected: 0 };
@@ -84,6 +95,23 @@ const DashboardPage = () => {
 
   return (
     <Container className="space-y-10">
+      {toast && (
+        <div
+          role="status"
+          className="rounded-3xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 shadow-sm"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <span>{toast}</span>
+            <button
+              type="button"
+              onClick={() => setToast('')}
+              className="rounded-full border border-emerald-300 px-3 py-1 text-xs font-semibold text-emerald-600 transition hover:bg-emerald-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-emerald-500"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
       <header className="space-y-3">
         <h1 className="text-2xl font-semibold text-slate-900">Application dashboard</h1>
         <p className="text-sm text-slate-500">Track every requirement and stay ahead of deadlines.</p>
