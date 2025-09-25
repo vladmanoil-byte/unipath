@@ -8,20 +8,23 @@ import ComparePage from './routes/ComparePage.jsx';
 import DashboardPage from './routes/DashboardPage.jsx';
 import ProfileOnboarding from './routes/ProfileOnboarding.jsx';
 import ProfilePage from './routes/ProfilePage.jsx';
+import LandingPage from './routes/LandingPage.jsx';
+import WizardPage from './routes/WizardPage.jsx';
 
 const App = () => (
   <div className="min-h-screen bg-slate-50">
     <NavBar />
     <div className="pt-24 pb-16">
       <Routes>
-        <Route path="/" element={<Navigate to="/search" replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/search" element={<SearchPage />} />
         <Route path="/university/:id" element={<UniversityDetailPage />} />
         <Route path="/compare" element={<ComparePage />} />
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/onboarding" element={<ProfileOnboarding />} />
         <Route path="/profile" element={<ProfilePage />} />
-        <Route path="*" element={<Navigate to="/search" replace />} />
+        <Route path="/wizard" element={<WizardPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
   </div>

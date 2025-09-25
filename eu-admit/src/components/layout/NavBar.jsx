@@ -81,7 +81,7 @@ const NavBar = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70">
       <Container className="flex h-20 items-center justify-between gap-6">
-        <Link to="/search" className="flex items-center gap-2">
+        <Link to="/" className="flex items-center gap-2">
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-brand-500 text-lg font-semibold text-white">
             EU
           </span>
@@ -105,10 +105,10 @@ const NavBar = () => {
         <div className="flex items-center gap-4">
           <NotificationBell items={notificationItems} />
           <Link
-            to="/onboarding"
-            className="hidden rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:border-brand-500 hover:text-brand-600 md:inline-flex"
+            to="/wizard"
+            className="inline-flex rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-brand-500 hover:text-brand-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500"
           >
-            Update profile
+            Get started
           </Link>
           <Link
             to="/profile"
